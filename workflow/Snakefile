@@ -8,7 +8,8 @@ Read_id = config["ID"]
 rule all:
     input:
         f"results/01_fastqc/{Read_id}_fastqc.html",
-        f"results/03_quast/{Read_id}/report.html"
+        f"results/03_quast/{Read_id}/report.html",
+        f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt""
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -69,7 +70,18 @@ rule assembly_check1:
     wrapper:
         "0.85.0/bio/quast"
 
-
+# genome assembly check by BUSCO
+rule assembly_check2:
+    input:
+       assembly=rules.convert_gfa.output.fa
+    output:
+       summary=f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt""
+    threads: 10
+    params:
+        outdir=f"results/04_busco/{Read_id}",
+        lineage="saccharomycetes_odb10"
+    wrapper:
+        "0.85.0/bio/busco"
         
 
 
