@@ -38,14 +38,15 @@ rule fastqc:
 # Perform the denovo assembly
 rule de_novo:
     input:
-        fastq=rules.generate_fastq.output.fastq
+        fasta=rules.generate_fastq.output.fastq
     output:
         gfa=f"results/02_assembly/{Read_id}.bp.p_ctg.gfa"
     threads: 15
     params:
-        prefix=f"results/02_assembly/{Read_id}"
+        outdir="results/02_assembly",
+        prefix="{Read_id}"
     wrapper:
-        "0.85.0/bio/hifiasm"
+        "v9.1.1/bio/hifiasm"
 
 # convert .gfa to .fa
 rule convert_gfa:
@@ -68,7 +69,7 @@ rule assembly_check1:
     params:
         prefix=f"results/03_quast/{Read_id}"
     wrapper:
-        "0.85.0/bio/quast"
+        "v9.1.0/bio/quast"
 
 # genome assembly check by BUSCO
 rule assembly_check2:
