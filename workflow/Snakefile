@@ -75,7 +75,7 @@ rule assembly_check2:
     input:
        assembly=rules.convert_gfa.output.fa
     output:
-       summary=f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt""
+       summary=f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt"
     threads: 10
     params:
         outdir=f"results/04_busco/{Read_id}",
