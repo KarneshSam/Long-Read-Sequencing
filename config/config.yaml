@@ -1,0 +1,6 @@
+# config/config.yaml
+
+# Long read sequence read data
+# fastqc file
+ID: 'SRR13577846'
+
