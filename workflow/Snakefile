@@ -9,7 +9,7 @@ rule all:
     input:
         f"results/01_fastqc/{Read_id}_fastqc.html",
         f"results/03_quast/{Read_id}/report.html",
-        f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt""
+        f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt"
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
