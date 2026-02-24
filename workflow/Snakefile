@@ -7,7 +7,8 @@ Read_id = config["ID"]
 
 rule all:
     input:
-        f"resources/{Read_id}/{Read_id}.fastq"
+        f"resources/{Read_id}/{Read_id}.fastq",
+        f"results/01_fastqc/{Read_id}_fastqc.html"
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -20,3 +21,15 @@ rule generate_fastq:
         mkdir -p resources/{Read_id}
         fastq-dump -O resources/{Read_id} {Read_id}
         """
+
+# Perform the quality assessment using fastqc
+rule fastqc:
+    input:
+        fastq=rules.generate_fastq.output.fastq
+    output:
+       html=f"results/01_fastqc/{Read_id}_fastqc.html",
+       zip=f"results/01_fastqc/{Read_id}_fastqc.zip"
+    threads: 8
+    wrapper:
+        "0.85.0/bio/fastqc"
+        
