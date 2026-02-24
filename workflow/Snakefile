@@ -1,0 +1,22 @@
+
+# the configuration file, stores the seq ID
+configfile: "config/config.yaml"
+
+# extract the SRA id
+Read_id = config["ID"]
+
+rule all:
+    input:
+        f"resources/{Read_id}/{Read_id}.fastq"
+
+# Download the fastq read data using SRA-tool
+rule generate_fastq:
+    output:
+        fastq=f"resources/{Read_id}/{Read_id}.fastq"
+    conda:
+        "envs/sratools.yaml"
+    shell:
+        """
+        mkdir -p resources/{Read_id}
+        fastq-dump -O resources/{Read_id} {Read_id}
+        """
