@@ -7,8 +7,8 @@ Read_id = config["ID"]
 
 rule all:
     input:
-        f"resources/{Read_id}/{Read_id}.fastq",
-        f"results/01_fastqc/{Read_id}_fastqc.html"
+        f"results/01_fastqc/{Read_id}_fastqc.html",
+        f"results/02_assembly/{Read_id}.p_ctg.fa"
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -32,4 +32,21 @@ rule fastqc:
     threads: 8
     wrapper:
         "0.85.0/bio/fastqc"
-        
+
+# Perform the denovo assembly
+rule de_novo:
+    input:
+        fastq=rules.generate_fastq.output.fastq
+    output:
+        prim=f"results/02_assembly/{Read_id}.p_ctg.fa",
+        alt=f"results/02_assembly/{Read_id}.a_ctg.fa",
+        log=f"results/02_assembly/{Read_id}.log"
+    conda:
+        "envs/assembly.yaml"
+    shell:
+        """
+        mkdir -p results/02_assembly
+
+        hifiasm -o results/02_assembly/{Read_id} -t 10 {input.fastq} > {output.log}
+        """
+
