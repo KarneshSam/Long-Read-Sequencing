@@ -55,7 +55,7 @@ rule convert_gfa:
         fa=f"results/02_assembly/{Read_id}.bp.p_ctg.fa"
     shell:
         """
-        awk '/^S/{print ">"$2"\n"$3}' {input.gfa} > {output.fa}
+        awk '/^S/{{print ">"$2"\\n"$3}}' {input.gfa} > {output.fa}
         """
 
 # genome assembly quality check by quast
