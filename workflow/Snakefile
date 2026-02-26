@@ -38,15 +38,19 @@ rule fastqc:
 # Perform the denovo assembly
 rule de_novo:
     input:
-        fasta=rules.generate_fastq.output.fastq
+        fastq=rules.generate_fastq.output.fastq
     output:
         gfa=f"results/02_assembly/{Read_id}.bp.p_ctg.gfa"
-    threads: 15
+    conda:
+        "envs/assembly.yaml"
     params:
-        outdir="results/02_assembly",
-        prefix="{Read_id}"
-    wrapper:
-        "v9.1.1/bio/hifiasm"
+        prefix=f"results/02_assembly/{Read_id}"
+    threads: 30
+    shell:
+        """
+        mkdir -p results/02_assembly
+        hifiasm -o {params.prefix} -t {threads} {input.fastq} 
+        """
 
 # convert .gfa to .fa
 rule convert_gfa:
