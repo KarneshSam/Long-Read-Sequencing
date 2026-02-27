@@ -1,3 +1,4 @@
+# Snakefile
 
 # the configuration file, stores the seq ID
 configfile: "config/config.yaml"
@@ -9,7 +10,7 @@ rule all:
     input:
         f"results/01_fastqc/{Read_id}_fastqc.html",
         f"results/03_quast/{Read_id}/report.html",
-        f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt"
+        f"results/04_busco/{Read_id}"
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -21,7 +22,7 @@ rule generate_fastq:
     shell:
         """
         mkdir -p resources/{Read_id}
-        fasterq-dump {Read_id} -O resources/{Read_id} -e {threads}
+        fasterq-dump {Read_id} -O resources/{Read_id} -e {threads}   # the fasterq-dump is used to extract the sequence from the NCBI
         """
 
 # Perform the quality assessment using fastqc
@@ -33,7 +34,7 @@ rule fastqc:
        zip=f"results/01_fastqc/{Read_id}_fastqc.zip"
     threads: 8
     wrapper:
-        "0.85.0/bio/fastqc"
+        "0.85.0/bio/fastqc"         # snakemake wrapper is used to generate fastqc
 
 # Perform the denovo assembly
 rule de_novo:
@@ -60,33 +61,39 @@ rule convert_gfa:
         fa=f"results/02_assembly/{Read_id}.bp.p_ctg.fa"
     shell:
         """
-        awk '/^S/{{print ">"$2"\\n"$3}}' {input.gfa} > {output.fa}
+        awk '/^S/{{print ">"$2"\\n"$3}}' {input.gfa} > {output.fa}          # converting the gfa to fa (fasta format)
         """
 
 # genome assembly quality check by quast
 rule assembly_check1:
     input:
-        assembly=rules.convert_gfa.output.fa
+        fasta=rules.convert_gfa.output.fa
     output:
         report=f"results/03_quast/{Read_id}/report.html"
     threads: 15
     params:
         prefix=f"results/03_quast/{Read_id}"
-    wrapper:
-        "v9.1.0/bio/quast"
+    conda:
+        "envs/quast.yaml"
+    shell:
+        """
+        mkdir -p results/03_quast/{Read_id}
+        quast {input.fasta} -o {params.prefix}
+        """
 
 # genome assembly check by BUSCO
 rule assembly_check2:
     input:
-       assembly=rules.convert_gfa.output.fa
+        fasta=rules.convert_gfa.output.fa
     output:
-       summary=f"results/04_busco/{Read_id}/short_summary.specific.saccharomycetes_odb10.busco_saccharomyces.txt"
-    threads: 10
+        short_txt=f"results/04_busco/{Read_id}"
+    threads: 15
     params:
-        outdir=f"results/04_busco/{Read_id}",
+        mode="genome",
         lineage="saccharomycetes_odb10"
     wrapper:
-        "0.85.0/bio/busco"
+        "v9.1.0/bio/busco"
+    
         
 
 
