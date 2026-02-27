@@ -10,7 +10,7 @@ rule all:
     input:
         f"results/01_fastqc/{Read_id}_fastqc.html",
         f"results/03_quast/{Read_id}/report.html",
-        f"results/04_busco/{Read_id}"
+        directory(f"results/04_busco/{Read_id}")
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -86,7 +86,7 @@ rule assembly_check2:
     input:
         fasta=rules.convert_gfa.output.fa
     output:
-        short_txt=f"results/04_busco/{Read_id}"
+        out_dir=directory(f"results/04_busco/{Read_id}")
     threads: 15
     params:
         mode="genome",
