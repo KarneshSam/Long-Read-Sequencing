@@ -4,3 +4,8 @@
 # fastqc file
 ID: 'SRR13577846'
 
+# the reference dataset for the BUSCO analysis
+# the dataset is downloaded from the OrthoDB database, 
+# which is a database of orthologous groups of genes. 
+# the lineage dataset can be editied to other dataset, such as 'eukaryota_odb10' or 'fungi_odb10', depending on the species of the sample.
+Dataset: 'saccharomycetes_odb10'
