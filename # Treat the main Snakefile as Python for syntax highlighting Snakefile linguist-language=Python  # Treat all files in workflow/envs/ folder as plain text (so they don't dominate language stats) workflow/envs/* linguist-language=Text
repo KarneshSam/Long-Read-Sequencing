@@ -1,0 +1,5 @@
+# Treat the main Snakefile as Python for syntax highlighting
+Snakefile linguist-language=Python
+
+# Treat all files in workflow/envs/ folder as plain text (so they don't dominate language stats)
+workflow/envs/* linguist-language=Text
