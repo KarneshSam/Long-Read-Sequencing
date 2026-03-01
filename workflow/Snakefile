@@ -5,12 +5,14 @@ configfile: "config/config.yaml"
 
 # extract the SRA id
 Read_id = config["ID"]
+# extract the lineage dataset for BUSCO analysis
+Dataset = config["Dataset"]
 
 rule all:
     input:
         f"results/01_fastqc/{Read_id}_fastqc.html",
         f"results/03_quast/{Read_id}/report.html",
-        directory(f"results/04_busco/{Read_id}")
+        directory(f"results/04_busco")
 
 # Download the fastq read data using SRA-tool
 rule generate_fastq:
@@ -81,20 +83,36 @@ rule assembly_check1:
         quast {input.fasta} -o {params.prefix}
         """
 
+# download the reference genome
+rule download_reference:
+    output:
+         out_dir=directory(f"resources/busco_downloads")
+    params:
+        lineage=Dataset,
+        prefix=f"resources/busco_downloads"
+    conda:
+        "envs/busco.yaml"
+    shell:         
+         """
+         busco --download {params.lineage} 
+        """
 # genome assembly check by BUSCO
 rule assembly_check2:
     input:
-        fasta=rules.convert_gfa.output.fa
+        fasta=rules.convert_gfa.output.fa,
+        data=rules.download_reference.output.out_dir
     output:
-        out_dir=directory(f"results/04_busco/{Read_id}")
+        out_dir=directory(f"results/04_busco")
     threads: 15
     params:
         mode="genome",
-        lineage="saccharomycetes_odb10"
+        lineage=Dataset
+    conda:
+        "envs/busco.yaml"
     shell:
         """
         mkdir -p results/04_busco/{Read_id}
-        busco -i {input.fasta} -o results/04_busco/{Read_id} -l {params.lineage} -m {params.mode} --cpu {threads}
+        busco -i {input.fasta} -o {Read_id} --out_path {output.out_dir} -l {params.lineage} -m {params.mode} --cpu {threads} -f
         """
     
         
