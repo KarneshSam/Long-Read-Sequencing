@@ -1,0 +1,30 @@
+# BUSCO version is: 6.0.0 
+# The lineage dataset is: saccharomycetes_odb10 (Creation date: 2024-01-08, number of genomes: 76, number of BUSCOs: 2137)
+# Summarized benchmarking in BUSCO notation for file /home/inf-41-2025/BINP29/Long-read-seq/Long-Read-Sequencing/results/02_assembly/SRR13577846.bp.p_ctg.fa
+# BUSCO was run in mode: euk_genome_min
+# Gene predictor used: miniprot
+
+	***** Results: *****
+
+	C:99.3%[S:97.4%,D:2.0%],F:0.0%,M:0.6%,n:2137,E:35.8%	   
+	2123	Complete BUSCOs (C)	(of which 761 contain internal stop codons)		   
+	2081	Complete and single-copy BUSCOs (S)	   
+	42	Complete and duplicated BUSCOs (D)	   
+	1	Fragmented BUSCOs (F)			   
+	13	Missing BUSCOs (M)			   
+	2137	Total BUSCO groups searched		   
+
+Assembly Statistics:
+	43	Number of scaffolds
+	43	Number of contigs
+	12662356	Total length
+	0.000%	Percent gaps
+	807 kbp	Scaffold N50
+	807 kbp	Contigs N50
+
+
+Dependencies and versions:
+	hmmsearch: 3.4
+	bbtools: None
+	miniprot_index: 0.18-r281
+	miniprot_align: 0.18-r281
