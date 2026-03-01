@@ -83,30 +83,17 @@ rule assembly_check1:
         quast {input.fasta} -o {params.prefix}
         """
 
-# download the reference genome
-rule download_reference:
-    output:
-         out_dir=directory(f"resources/busco_downloads")
-    params:
-        lineage=Dataset,
-        prefix=f"resources/busco_downloads"
-    conda:
-        "envs/busco.yaml"
-    shell:         
-         """
-         busco --download {params.lineage} 
-        """
 # genome assembly check by BUSCO
 rule assembly_check2:
     input:
-        fasta=rules.convert_gfa.output.fa,
-        data=rules.download_reference.output.out_dir
+        fasta=rules.convert_gfa.output.fa
     output:
         out_dir=directory(f"results/04_busco")
     threads: 15
     params:
         mode="genome",
-        lineage=Dataset
+        lineage=Dataset,
+        download_path=f"resources/busco_downloads"
     conda:
         "envs/busco.yaml"
     shell:
