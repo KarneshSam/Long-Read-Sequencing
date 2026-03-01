@@ -111,8 +111,19 @@ rule assembly_check2:
         "envs/busco.yaml"
     shell:
         """
-        mkdir -p results/04_busco/{Read_id}
-        busco -i {input.fasta} -o {Read_id} --out_path {output.out_dir} -l {params.lineage} -m {params.mode} --cpu {threads} -f
+        mkdir -p results/04_busco
+        mkdir -p {params.download_path}
+
+        # Run BUSCO
+        busco \
+            -i {input.fasta} \
+            -o {Read_id} \
+            --out_path {output.out_dir} \
+            -l {params.lineage} \
+            -m {params.mode} \
+            --cpu {threads} \
+            --download_path {params.download_path} \
+            --force
         """
     
         
